@@ -1,31 +1,38 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-
     imageUrl: {
       type: String,
       required: true,
     },
-
     caption: {
       type: String,
-      trim: true,
+      default: "",
+      maxlength: 2200,
     },
-
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
+    commentsCount: {
+      type: Number,
+      default: 0,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Post", postSchema);
+postSchema.index({ userId: 1, createdAt: -1 });
+postSchema.index({ createdAt: -1 });
+
+const Post = mongoose.model("Post", postSchema);
+
+export default Post;
